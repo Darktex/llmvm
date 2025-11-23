@@ -1,0 +1,11 @@
+{
+  "domain": "llmvm_conversation",
+  "name": "LLMVM Conversation Agent",
+  "codeowners": ["@llmvm"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/9600dev/llmvm",
+  "iot_class": "local_polling",
+  "requirements": ["httpx>=0.27.0"],
+  "version": "1.0.0"
+}

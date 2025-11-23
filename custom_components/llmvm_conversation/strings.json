@@ -1,0 +1,21 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to LLMVM Server",
+        "description": "Configure connection to your LLMVM server instance",
+        "data": {
+          "llmvm_url": "LLMVM Server URL",
+          "llmvm_executor": "LLM Executor",
+          "llmvm_model": "Model Name",
+          "temperature": "Temperature",
+          "max_tokens": "Max Tokens"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to LLMVM server",
+      "unknown": "An unexpected error occurred"
+    }
+  }
+}

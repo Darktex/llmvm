@@ -1,0 +1,87 @@
+# Docker Compose example for LLMVM + HomeAssistant MCP Server
+#
+# Usage:
+#   docker-compose up -d
+
+version: '3.8'
+
+services:
+  # LLMVM Server
+  llmvm:
+    image: llmvm:latest  # You'll need to build this image
+    container_name: llmvm-server
+    ports:
+      - "8011:8011"
+    volumes:
+      - ~/.config/llmvm:/root/.config/llmvm
+      - ~/.local/share/llmvm:/root/.local/share/llmvm
+    environment:
+      # Point to local LLM
+      - OPENAI_API_BASE=http://local-llm:8000/v1
+      # Or use cloud provider
+      # - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    restart: unless-stopped
+    networks:
+      - llmvm-network
+
+  # HomeAssistant MCP Server
+  ha-mcp-server:
+    image: python:3.11-slim
+    container_name: ha-mcp-server
+    working_dir: /app
+    volumes:
+      - ./homeassistant-mcp:/app
+    environment:
+      - HOME_ASSISTANT_URL=http://homeassistant:8123
+      - HOME_ASSISTANT_TOKEN=${HA_TOKEN}
+    command: python -m homeassistant_mcp.server --port 8765
+    ports:
+      - "8765:8765"
+    restart: unless-stopped
+    networks:
+      - llmvm-network
+    depends_on:
+      - homeassistant
+
+  # Local LLM (example with vLLM)
+  local-llm:
+    image: vllm/vllm-openai:latest
+    container_name: local-llm
+    ports:
+      - "8000:8000"
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    command:
+      - --model
+      - meta-llama/Meta-Llama-3-70B-Instruct  # Your model here
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+    networks:
+      - llmvm-network
+
+  # HomeAssistant (if not already running)
+  homeassistant:
+    image: homeassistant/home-assistant:stable
+    container_name: homeassistant
+    ports:
+      - "8123:8123"
+    volumes:
+      - ./homeassistant-config:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    network_mode: host  # Required for device discovery
+    privileged: true
+
+networks:
+  llmvm-network:
+    driver: bridge

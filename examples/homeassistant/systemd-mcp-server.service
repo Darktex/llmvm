@@ -1,0 +1,35 @@
+# Systemd service file for HomeAssistant MCP Server
+# Install to: /etc/systemd/system/ha-mcp-server.service
+#
+# Usage:
+#   sudo systemctl enable ha-mcp-server
+#   sudo systemctl start ha-mcp-server
+#   sudo systemctl status ha-mcp-server
+
+[Unit]
+Description=HomeAssistant MCP Server
+After=network.target homeassistant.service
+Requires=homeassistant.service
+
+[Service]
+Type=simple
+User=your_username
+Group=your_username
+WorkingDirectory=/home/your_username/homeassistant-mcp
+
+# Load environment variables from .env file
+EnvironmentFile=/home/your_username/homeassistant-mcp/.env
+
+ExecStart=/usr/bin/python3 -m homeassistant_mcp.server --port 8765
+
+# Restart policy
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ha-mcp-server
+
+[Install]
+WantedBy=multi-user.target

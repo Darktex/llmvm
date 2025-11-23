@@ -1,0 +1,10 @@
+# Example .env file for HomeAssistant MCP Server
+# Save this as .env in your homeassistant-mcp directory
+
+# HomeAssistant connection settings
+HOME_ASSISTANT_URL=http://localhost:8123
+HOME_ASSISTANT_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.your_long_lived_access_token_here
+
+# MCP Server settings (optional)
+# PORT=8765
+# LOG_LEVEL=INFO
