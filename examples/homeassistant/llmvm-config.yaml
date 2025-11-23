@@ -1,0 +1,106 @@
+# Example LLMVM configuration for HomeAssistant integration
+# Save this to ~/.config/llmvm/config.yaml
+
+# Server configuration
+server_host: '0.0.0.0'  # Listen on all interfaces (use '127.0.0.1' for localhost only)
+server_port: 8011
+
+# LLM Executor Configuration
+# Option 1: Local LLM via OpenAI-compatible API (recommended for privacy)
+executor: 'openai'
+openai_api_base: 'http://your-dgx-spark:8000/v1'  # Your local LLM endpoint
+default_openai_model: 'your-model-name'  # e.g., 'llama-3-70b' or whatever your local model is called
+
+# Option 2: Cloud providers (if you prefer)
+# executor: 'anthropic'
+# default_anthropic_model: 'claude-sonnet-4-20250514'
+#
+# executor: 'gemini'
+# default_gemini_model: 'gemini-2.5-pro'
+
+# Performance settings
+profiling: false
+chromium_headless: true
+full_processing: true
+
+# Storage directories
+cache_directory: '~/.local/share/llmvm/cache'
+log_directory: '~/.local/share/llmvm/logs'
+memory_directory: '~/.local/share/llmvm/memory'
+
+# Helper functions - all the tools available to the agent
+# MCP tools (HomeAssistant control) are auto-discovered and don't need to be listed here
+helper_functions:
+  # Date/Time utilities
+  - llmvm.server.bcl.BCL.datetime
+
+  # Weather and location
+  - llmvm.server.bcl.BCL.get_weather
+  - llmvm.server.bcl.BCL.address_lat_lon
+
+  # Financial data
+  - llmvm.server.bcl.BCL.get_currency_rates
+  - llmvm.server.bcl.BCL.get_gold_silver_price_in_usd
+  - llmvm.server.bcl.BCL.get_bitcoin_prices_in_usd
+  - llmvm.server.bcl.BCL.get_central_bank_rates
+
+  # Market/Stock data
+  - llmvm.server.tools.market.MarketHelpers.get_stock_price
+  - llmvm.server.tools.market.MarketHelpers.get_current_market_capitalization
+  - llmvm.server.tools.market.MarketHelpers.get_stock_volatility
+  - llmvm.server.tools.market.MarketHelpers.get_stock_price_history
+  - llmvm.server.tools.market.MarketHelpers.get_stock_analysis
+  - llmvm.server.tools.market.MarketHelpers.get_options_chain
+
+  # Web search and browsing
+  - llmvm.server.tools.browser.Browser
+  - llmvm.server.tools.search_tool.Search.google_search
+  - llmvm.server.tools.search_tool.Search.google_patent_search
+  - llmvm.server.tools.search_tool.Search.bluesky_search
+  - llmvm.server.tools.search_tool.Search.yelp_search
+  - llmvm.server.tools.search_tool.Search.hackernews_search
+
+  # Data visualization
+  - llmvm.server.bcl.BCL.generate_graph_image
+  - llmvm.server.bcl.BCL.matplotlib_to_image
+
+  # Statistical sampling
+  - llmvm.server.bcl.BCL.sample_normal
+  - llmvm.server.bcl.BCL.sample_binomial
+  - llmvm.server.bcl.BCL.sample_lognormal
+  - llmvm.server.bcl.BCL.sample_list
+
+  # File operations
+  - llmvm.server.bcl.BCL.search_and_replace
+  - llmvm.server.bcl.BCL.find
+  - llmvm.server.bcl.BCL.get_source_code_structure_summary
+  - llmvm.server.bcl.BCL.get_source_code
+  - llmvm.server.bcl.BCL.find_all_references_to_method
+
+  # Entertainment
+  - llmvm.server.bcl.BCL.get_tvshow_ratings_and_details
+
+  # LinkedIn/Professional (if you use these)
+  # - llmvm.server.tools.webhelpers.WebHelpers.search_linkedin_profile
+  # - llmvm.server.tools.webhelpers.WebHelpers.get_linkedin_profile
+
+  # HackerNews
+  - llmvm.server.tools.webhelpers.WebHelpers.get_hackernews_latest
+
+  # SEC Filings (if you need financial data)
+  # - llmvm.server.tools.edgar.EdgarHelpers.get_filings
+  # - llmvm.server.tools.edgar.EdgarHelpers.get_form_filing_or_item_url_as_markdown
+  # - llmvm.server.tools.edgar.EdgarHelpers.get_latest_filing_as_markdown
+
+  # Google Sheets (if you use this)
+  # - llmvm.server.tools.sheets.GoogleSheetsManager
+
+  # macOS Chrome (if on macOS)
+  # - llmvm.server.tools.macos_chrome_browser.MacOSChromeBrowser
+
+# Client display settings
+client_stream_token_color: '#dddddd'
+client_stream_thinking_token_color: '#5f819d'
+client_role_color: 'bold cyan'
+client_repl_color: 'ansibrightcyan'
+client_markdown_inline: true

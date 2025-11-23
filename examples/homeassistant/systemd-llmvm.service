@@ -1,0 +1,37 @@
+# Systemd service file for LLMVM server
+# Install to: /etc/systemd/system/llmvm.service
+#
+# Usage:
+#   sudo systemctl enable llmvm
+#   sudo systemctl start llmvm
+#   sudo systemctl status llmvm
+
+[Unit]
+Description=LLMVM Agent Server
+After=network.target
+
+[Service]
+Type=simple
+User=your_username
+Group=your_username
+WorkingDirectory=/home/your_username
+Environment="PATH=/home/your_username/.local/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="LLMVM_CONFIG=/home/your_username/.config/llmvm/config.yaml"
+
+# If you need API keys for cloud providers
+# Environment="ANTHROPIC_API_KEY=your_key_here"
+# Environment="OPENAI_API_KEY=your_key_here"
+
+ExecStart=/home/your_username/.local/bin/llmvm-server
+
+# Restart policy
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=llmvm
+
+[Install]
+WantedBy=multi-user.target

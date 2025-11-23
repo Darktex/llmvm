@@ -1,0 +1,24 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to LLMVM Server",
+        "description": "Configure connection to your LLMVM server instance",
+        "data": {
+          "llmvm_url": "LLMVM Server URL",
+          "llmvm_executor": "LLM Executor (openai, anthropic, gemini, etc.)",
+          "llmvm_model": "Model Name (optional, uses executor default if empty)",
+          "temperature": "Temperature (0-2, controls randomness)",
+          "max_tokens": "Max Tokens (maximum response length)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to LLMVM server. Please check the URL and ensure the server is running.",
+      "unknown": "An unexpected error occurred"
+    },
+    "abort": {
+      "already_configured": "This LLMVM server is already configured"
+    }
+  }
+}
