@@ -4,7 +4,7 @@ LLMVM is a CLI based productivity tool that uses Large Language Models and local
 
 It does not use traditional tool calling API's, instead, it allows the LLM to interleave natural language and code, generally resulting in significantly better task deconstruction and execution. This is a [similar approach](https://towardsdev.com/codeact-the-engine-behind-manus-how-llms-are-learning-to-code-their-way-to-action-17c6c0fe1068) that [Manus](https://manus.im) uses, although LLMVM has been doing this since before it was cool.
 
-LLMVM supports [Anthropic's](https://www.anthropic.com) Claude 4 (Opus Sonnet), Claude 3 (Opus, Sonnet and Haiku) models, and [OpenAI](https://openai.com/blog/openai-api) GPT 4o/4.1/o3/o4 models from OpenAI. [Gemini](https://deepmind.google/technologies/gemini/), [DeepSeek v3](https://www.deepseek.com/) and [Amazon Nova](https://docs.aws.amazon.com/nova/) are currently experimental. LLMVM is best used with either the [kitty](https://github.com/kovidgoyal/kitty) or [WezTerm](https://wezfurlong.org/wezterm/index.html) terminals as LLMVM will screenshot and render images as vision based tasks progress.
+LLMVM supports [Anthropic's](https://www.anthropic.com) Claude 4 (Opus Sonnet), Claude 3 (Opus, Sonnet and Haiku) models, and [OpenAI](https://openai.com/blog/openai-api) GPT 4o/4.1/o3/o4 models from OpenAI. [Gemini](https://deepmind.google/technologies/gemini/), [DeepSeek v3](https://www.deepseek.com/), [Amazon Nova](https://docs.aws.amazon.com/nova/), and [Ollama](https://ollama.ai) (for local models) are also supported. LLMVM is best used with either the [kitty](https://github.com/kovidgoyal/kitty) or [WezTerm](https://wezfurlong.org/wezterm/index.html) terminals as LLMVM will screenshot and render images as vision based tasks progress.
 
 
 > **Update June 7th 2025**: Added the ability to "compile" a user/assistant message thread into a genericized and parameterized program. It will try and lift out repeated LLM calls by specializing code based on the "shape" of data it sees at runtime, and guard against that shape, bailing out to recompile if different shapes are seen. Basically a LLM JIT compiler... Try it, using "compile"
@@ -353,14 +353,24 @@ With the docker container running, you can run client.py on your local machine:
 
 You can ssh into the docker container: ssh llmvm@127.0.0.1 -p 2222
 
-### Configuring Anthropic vs. OpenAI
+### Configuring Executors
 
-* open `~/.config/llmvm/config.yaml` and change executor to 'anthropic' or 'openai', 'gemini', 'deepseek' or 'bedrock':
+* open `~/.config/llmvm/config.yaml` and change executor to 'anthropic', 'openai', 'gemini', 'deepseek', 'bedrock', or 'ollama':
 
 ```yaml
-executor: 'anthropic'  # or 'openai', or 'gemini' or 'deepseek', or 'bedrock'
+executor: 'anthropic'  # or 'openai', 'gemini', 'deepseek', 'bedrock', or 'ollama'
 anthropic_model: 'claude-sonnet-4-20250514'
 ```
+
+For Ollama (local models):
+
+```yaml
+executor: 'ollama'
+default_ollama_model: 'llama3.1'  # or 'qwen2.5', 'mistral', etc.
+ollama_api_base: 'http://localhost:11434/v1'
+```
+
+See [docs/OLLAMA.md](docs/OLLAMA.md) for detailed Ollama setup instructions.
 
 or, you can set environment variables that specify the execution backend and the model you'd like to use:
 

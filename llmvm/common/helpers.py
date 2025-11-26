@@ -211,6 +211,16 @@ class Helpers():
                 default_max_output_len=max_output_tokens or override_max_output_len or TokenPriceCalculator().max_output_tokens(default_model_config, executor='bedrock', default=4096),
                 region_name=Container().get_config_variable('bedrock_api_base', 'BEDROCK_API_BASE'),
             )
+        elif executor_name == 'ollama':
+            from llmvm.common.ollama_executor import OllamaExecutor
+
+            executor_instance = OllamaExecutor(
+                api_key=api_key or 'ollama',  # Ollama doesn't validate API keys
+                default_model=default_model_config,
+                api_endpoint=api_endpoint or Container().get_config_variable('ollama_api_base', 'OLLAMA_API_BASE', 'http://localhost:11434/v1'),
+                default_max_input_len=max_input_tokens or override_max_input_len or TokenPriceCalculator().max_input_tokens(default_model_config, executor='ollama', default=128000),
+                default_max_output_len=max_output_tokens or override_max_output_len or TokenPriceCalculator().max_output_tokens(default_model_config, executor='ollama', default=4096),
+            )
         else:
             # openai is the only one we'd change the api_endpoint for, given everyone provides
             # openai API compatibility endpoints these days.
