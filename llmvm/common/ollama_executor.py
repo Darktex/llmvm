@@ -165,13 +165,27 @@ class OllamaExecutor(OpenAIExecutor):
         - Stop tokens
         - Temperature control
 
-        Note: Some parameters like 'thinking' may not be supported by all models.
+        IMPORTANT: Ollama's OpenAI-compatible API does NOT support passing num_ctx
+        via the API. You must create model variants with the desired context size:
+
+        docker exec open-webui sh -c 'echo -e "FROM modelname\\nPARAMETER num_ctx 262144" > /root/.ollama/ctx.Modelfile && ollama create modelname-ctx -f /root/.ollama/ctx.Modelfile'
+
+        Then use 'modelname-ctx' instead of 'modelname' to get the full context.
         """
         # Ollama doesn't support reasoning/thinking modes like o1/o3
-        # If thinking is requested, log a warning and proceed without it
         if thinking > 0:
             logging.debug(f'Ollama does not support reasoning modes. Ignoring thinking={thinking}')
             thinking = 0
+
+        # Log warning for large prompts that might get truncated
+        message_tokens = await self.count_tokens_dict(messages)
+        if message_tokens > 4096 and '-ctx' not in (model or self.default_model):
+            logging.warning(
+                f"Ollama: Prompt has {message_tokens} tokens but model '{model or self.default_model}' "
+                f"may use default 2048 context. Create a -ctx variant with: "
+                f"docker exec open-webui sh -c 'echo -e \"FROM {model or self.default_model}\\nPARAMETER num_ctx 262144\" "
+                f"> /root/.ollama/ctx.Modelfile && ollama create {model or self.default_model}-ctx -f /root/.ollama/ctx.Modelfile'"
+            )
 
         return await super().aexecute_direct(
             messages=messages,

@@ -1045,6 +1045,7 @@ class ExecutionController(Controller):
                     or self.get_executor().name() == "gemini"
                     or self.get_executor().name() == "deepseek"
                     or self.get_executor().name() == "bedrock"
+                    or self.get_executor().name() == "ollama"
                 )
             ):
                 response.stop_token = "</helpers>"
@@ -1057,6 +1058,7 @@ class ExecutionController(Controller):
                     or self.get_executor().name() == "gemini"
                     or self.get_executor().name() == "deepseek"
                     or self.get_executor().name() == "bedrock"
+                    or self.get_executor().name() == "ollama"
                 )
             ):
                 response.stop_token = "</complete>"
@@ -1069,6 +1071,7 @@ class ExecutionController(Controller):
                     or self.get_executor().name() == "gemini"
                     or self.get_executor().name() == "deepseek"
                     or self.get_executor().name() == "bedrock"
+                    or self.get_executor().name() == "ollama"
                 )
             ):
                 response.message = [

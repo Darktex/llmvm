@@ -275,7 +275,8 @@ async def stream_response(response):
     response_iterator = response.__aiter__()
     while True:
         try:
-            chunk = await asyncio.wait_for(response_iterator.__anext__(), timeout=120)
+            # Increased timeout for large prompts (especially with Ollama)
+            chunk = await asyncio.wait_for(response_iterator.__anext__(), timeout=300)
         except asyncio.TimeoutError:
             raise HTTPException(status_code=504, detail="Stream timed out")
         except StopAsyncIteration:

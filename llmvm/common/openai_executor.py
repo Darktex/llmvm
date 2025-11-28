@@ -451,6 +451,23 @@ class OpenAIExecutor(Executor):
                 base_params['extra_body'] = extra_body
 
             params = {k: v for k, v in base_params.items() if v is not None}
+
+            # Debug: log the actual request being sent to Ollama
+            if Container.get_config_variable('LLMVM_EXECUTOR_TRACE', default=''):
+                import json
+                debug_messages = params.get('messages', [])
+                debug_info = {
+                    'model': params.get('model'),
+                    'num_messages': len(debug_messages),
+                    'message_roles': [m.get('role') for m in debug_messages],
+                    'message_content_lengths': [
+                        len(json.dumps(m.get('content', '')))
+                        for m in debug_messages
+                    ]
+                }
+                with open(os.path.expanduser(Container.get_config_variable('LLMVM_EXECUTOR_TRACE')), 'a+') as f:
+                    f.write(f'\n<API_REQUEST_DEBUG>{json.dumps(debug_info, indent=2)}</API_REQUEST_DEBUG>\n\n')
+
             response = await self.aclient.chat.completions.create(**params)
             return TokenStreamManager(response, token_trace)  # type: ignore
 
