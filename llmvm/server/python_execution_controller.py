@@ -920,24 +920,13 @@ class ExecutionController(Controller):
             python_runtime_host.controller.get_executor().default_model = model
 
         # inject the python_continuation_execution.prompt prompt
-        functions = [Helpers.get_function_description_flat(f) for f in helpers]
-
-        system_message, tools_message = Helpers.prompts(
-            prompt_name=self.__execution_prompt(self.get_executor(), model, thinking),
-            template={
-                "functions": "\n".join(functions),
-                "context_window_tokens": str(self.get_executor().max_input_tokens()),
-                "context_window_words": str(
-                    int(self.get_executor().max_input_tokens() * 0.75)
-                ),
-                "context_window_bytes": str(
-                    int(self.get_executor().max_input_tokens() * 4)
-                ),
-            },
-            user_token=self.get_executor().user_token(),
-            assistant_token=self.get_executor().assistant_token(),
-            scratchpad_token=self.get_executor().scratchpad_token(),
-            append_token=self.get_executor().append_token(),
+        # USE CACHED PROMPT for Ollama KV cache reuse
+        from llmvm.server.prompt_cache import get_cached_system_prompt
+        system_message, tools_message = get_cached_system_prompt(
+            self.get_executor(),
+            model or self.get_executor().default_model,
+            thinking,
+            helpers
         )
 
         if self.get_executor().name() == "openai" and cast(
